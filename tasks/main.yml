@@ -8,7 +8,19 @@
   fail:
     msg: This role works only for Debian or Ubuntu systems.
   when: ansible_distribution != 'Debian' and ansible_distribution != 'Ubuntu'
-  
+
+- name: Determine is_nesting_enabled
+  # Thanks @pikey! -- https://forum.proxmox.com/threads/check-enabled-lxc-features-from-inside-container.153248/
+  command: unshare --mount --pid --fork --mount-proc true
+  register: is_nesting_enabled
+  ignore_errors: true
+  changed_when: false
+
+- name: Fail if nesting is not enabled
+  fail:
+    msg: Nesting is not enabled. Docker cannot be installed on this system. If this is an LXC container, please enable 'security.nesting' option.
+  when: is_nesting_enabled.rc != 0
+
 - name: Determine os_release_codename
   shell: . /etc/os-release && echo $VERSION_CODENAME
   register: os_release_codename
