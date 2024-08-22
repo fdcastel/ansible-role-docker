@@ -1,0 +1,57 @@
+#
+# Installs Docker Engine according to official instructions.
+#   - https://docs.docker.com/engine/install/debian/
+#   - https://docs.docker.com/engine/install/ubuntu/
+#
+
+- name: Fail if not Debian or Ubuntu
+  fail:
+    msg: This role works only for Debian or Ubuntu systems.
+  when: ansible_distribution != 'Debian' and ansible_distribution != 'Ubuntu'
+  
+- name: Determine os_release_codename
+  shell: . /etc/os-release && echo $VERSION_CODENAME
+  register: os_release_codename
+  changed_when: false
+
+# Remove files created by official Docker Engine installation instructions.
+#   If present, these files will conflict with following 'apt_' tasks.
+- name: Clear /etc/apt/keyrings/docker.asc
+  file:
+    path: /etc/apt/keyrings/docker.asc
+    state: absent
+
+- name: Clear /etc/apt/sources.list.d/docker.list
+  file:
+    path: /etc/apt/sources.list.d/docker.list
+    state: absent
+
+- name: Prerequisites
+  apt:
+    update_cache: true
+    pkg:
+      - ca-certificates
+      - curl
+      - gnupg    # for apt_key 
+    state: latest
+
+- name: Docker GPG Key
+  apt_key:
+    url: "https://download.docker.com/linux/{{ansible_distribution | lower}}/gpg"
+    state: present
+
+- name: Docker Repository
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/{{ansible_distribution | lower}} {{os_release_codename.stdout}} stable"
+    state: present
+
+- name: Docker packages
+  apt:
+    update_cache: true
+    pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io 
+      - docker-buildx-plugin 
+      - docker-compose-plugin
+    state: latest
