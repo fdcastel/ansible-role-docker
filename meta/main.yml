@@ -1,12 +1,12 @@
 galaxy_info:
-  author: F.D.Castel
-  description: your role description
+  author: F. D. Castel
+  description: Installs Docker Engine according to official instructions.
 
   issue_tracker_url: https://github.com/fdcastel/ansible-role-docker/issues
 
   license: license (GPL-2.0-or-later, MIT, etc)
 
-  min_ansible_version: 2.1
+  min_ansible_version: "2.1"
 
   galaxy_tags:
     - docker

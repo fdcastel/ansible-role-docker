@@ -44,7 +44,7 @@
     pkg:
       - ca-certificates
       - curl
-      - gnupg    # for apt_key 
+      - gnupg # for apt_key
     state: latest
 
 - name: Docker GPG Key
@@ -61,9 +61,9 @@
   apt:
     update_cache: true
     pkg:
-      - docker-ce 
-      - docker-ce-cli 
-      - containerd.io 
-      - docker-buildx-plugin 
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
       - docker-compose-plugin
     state: latest
